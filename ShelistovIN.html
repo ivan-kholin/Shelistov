@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedGemma Local AI – инструкция, прототип, ТЗ</title>
+    <style>
+        :root {
+            --bg: #0d1117; --surface: #161b22; --text: #c9d1d9;
+            --accent: #58a6ff; --border: #30363d; --error: #f85149;
+            --success: #3fb950; --warning: #d2991d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg); color: var(--text);
+            line-height: 1.6; padding: 1rem;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent); }
+        h2 { font-size: 1.4rem; margin: 1.5rem 0 0.8rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+        h3 { font-size: 1.1rem; margin: 1rem 0 0.5rem; color: var(--accent); }
+        .tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 1rem; }
+        .tab-btn {
+            padding: 0.6rem 1.2rem; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text); cursor: pointer; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover { background: #1f2937; }
+        .tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+        }
+        pre {
+            background: #0d1117; border: 1px solid var(--border);
+            border-radius: 8px; padding: 1rem; overflow-x: auto;
+            font-family: 'Courier New', monospace; font-size: 0.9rem;
+        }
+        code { font-family: 'Courier New', monospace; background: #1f2937; padding: 0.2rem 0.4rem; border-radius: 4px; }
+        .btn {
+            display: inline-block; padding: 0.6rem 1.2rem; background: var(--accent);
+            color: #000; border: none; border-radius: 8px; font-weight: 600;
+            cursor: pointer; transition: opacity 0.2s; text-decoration: none;
+            margin: 0.3rem;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn-outline {
+            background: transparent; border: 1px solid var(--accent); color: var(--accent);
+        }
+        .upload-area {
+            border: 2px dashed var(--accent); border-radius: 12px;
+            padding: 2rem; text-align: center; cursor: pointer;
+            transition: background 0.2s; margin: 1rem 0;
+        }
+        .upload-area:hover { background: #1f2937; }
+        #fileInput { display: none; }
+        #preview {
+            max-width: 100%; max-height: 250px; border-radius: 8px;
+            margin: 1rem 0; display: none;
+        }
+        .result-box {
+            background: #0d1117; border: 1px solid var(--border);
+            border-radius: 8px; padding: 1rem; margin: 1rem 0;
+            white-space: pre-wrap; font-family: monospace;
+        }
+        .notice {
+            background: #1f2937; border-left: 4px solid var(--warning);
+            padding: 0.8rem; border-radius: 0 8px 8px 0; margin: 1rem 0;
+        }
+        .footer {
+            margin-top: 2rem; padding: 1rem; text-align: center;
+            font-size: 0.85rem; color: #8b949e;
+            border-top: 1px solid var(--border);
+        }
+        @media (max-width: 600px) {
+            .tabs { flex-direction: column; }
+            .tab-btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🦷 MedGemma Local AI</h1>
+    <p>Локальный ИИ‑анализ рентгеновских снимков без интернета, подписок и облаков</p>
+
+    <!-- Навигация по разделам -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="tab-info">📘 О системе</button>
+        <button class="tab-btn" data-tab="tab-install">🛠️ Инструкция по установке</button>
+        <button class="tab-btn" data-tab="tab-proto">🖥️ Прототип интерфейса</button>
+        <button class="tab-btn" data-tab="tab-tz">📋 Техническое задание</button>
+    </div>
+
+    <!-- Раздел 1: Информация о MedGemma -->
+    <div id="tab-info" class="tab-content active">
+        <div class="card">
+            <h2>Что такое MedGemma?</h2>
+            <p><strong>MedGemma 27B</strong> – это медицинская модель искусственного интеллекта от Google с открытым исходным кодом (Health AI Developer Foundations). Она умеет анализировать медицинские изображения (рентген, КТ, МРТ) и генерировать текстовые описания.</p>
+            <h3>Ключевые преимущества</h3>
+            <ul style="padding-left:1.5rem;">
+                <li>✅ Полностью <strong>бесплатная</strong> и с открытым кодом</li>
+                <li>✅ Работает <strong>локально</strong> на вашем компьютере (без интернета)</li>
+                <li>✅ Высокая точность – до 87% на медицинских тестах</li>
+                <li>✅ Может запускаться даже на обычном ноутбуке с 16 ГБ ОЗУ</li>
+                <li>✅ Нет облачных сервисов, подписок или санкционных рисков</li>
+            </ul>
+            <div class="notice">
+                ⚠️ <strong>Важно:</strong> Для клинического использования требуется регистрация ПО как медицинского изделия в Росздравнадзоре. Пока можно использовать для ознакомления, обучения и научных целей.
+            </div>
+        </div>
+    </div>
+
+    <!-- Раздел 2: Пошаговая инструкция -->
+    <div id="tab-install" class="tab-content">
+        <div class="card">
+            <h2>Пошаговая установка MedAnalysis AI + MedGemma</h2>
+            <p>Вам потребуется компьютер с Windows 10/11, 16 ГБ ОЗУ и видеокартой от 8 ГБ (подойдёт даже игровая). Вся установка занимает около 30 минут.</p>
+
+            <h3>Шаг 1. Установите Python</h3>
+            <p>Скачайте с официального сайта <code>python.org</code> версию 3.10 или новее. При установке обязательно поставьте галочку <strong>«Add Python to PATH»</strong>.</p>
+
+            <h3>Шаг 2. Установите Ollama</h3>
+            <p>Ollama – это инструмент для запуска нейросетей локально. Скачайте установщик с <code>ollama.com/download</code> и запустите его. После установки Ollama будет работать в фоновом режиме.</p>
+
+            <h3>Шаг 3. Загрузите модель MedGemma</h3>
+            <p>Откройте командную строку (нажмите Win+R, введите <code>cmd</code> и Enter) и выполните команду:</p>
+            <pre>ollama pull medgemma:27b</pre>
+            <p>Дождитесь окончания загрузки (около 10-15 ГБ, зависит от скорости интернета).</p>
+
+            <h3>Шаг 4. Скачайте MedAnalysis AI</h3>
+            <p>Перейдите на GitHub‑репозиторий проекта MedAnalysis AI (или аналогичный) и скачайте ZIP‑архив, затем распакуйте его в удобную папку, например <code>C:\MedAnalysis</code>.</p>
+
+            <h3>Шаг 5. Установите зависимости Python</h3>
+            <p>В командной строке перейдите в папку с проектом:</p>
+            <pre>cd C:\MedAnalysis</pre>
+            <p>И выполните установку необходимых библиотек:</p>
+            <pre>pip install -r requirements.txt</pre>
+
+            <h3>Шаг 6. Запустите сервер</h3>
+            <p>Всё готово. Запустите приложение командой:</p>
+            <pre>python app.py</pre>
+            <p>После этого откройте браузер и перейдите по адресу <code>http://localhost:5000</code>. Вы увидите интерфейс для загрузки снимков и анализа.</p>
+
+            <div class="notice">
+                💡 Если вы хотите использовать другую модель (например, <code>medgemma:7b</code> для более слабых ПК), замените название в команде <code>ollama pull</code>.
+            </div>
+        </div>
+    </div>
+
+    <!-- Раздел 3: Прототип интерфейса -->
+    <div id="tab-proto" class="tab-content">
+        <div class="card">
+            <h2>Прототип рабочего интерфейса</h2>
+            <p>Загрузите рентгеновский снимок (JPG, PNG), выберите тип анализа и нажмите «Запустить анализ». Сейчас это демонстрация – результаты имитируются, но интерфейс полностью соответствует будущему реальному приложению.</p>
+
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <span id="uploadLabel">📁 Нажмите, чтобы выбрать файл</span>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)">
+            <img id="preview" alt="Загруженный снимок">
+
+            <div style="margin:1rem 0;">
+                <label for="analysisType" style="font-weight:600;">Тип анализа:</label>
+                <select id="analysisType" style="width:100%;padding:0.5rem;border-radius:6px;background:#0d1117;color:var(--text);border:1px solid var(--border);">
+                    <option value="full">Полный осмотр</option>
+                    <option value="caries">Поиск кариеса</option>
+                    <option value="periodontitis">Поиск периодонтита</option>
+                    <option value="cysts">Поиск кист и новообразований</option>
+                    <option value="bone">Оценка костной ткани</option>
+                </select>
+            </div>
+
+            <button class="btn" id="analyzeBtn" disabled onclick="analyzeImage()">🔍 Запустить анализ</button>
+
+            <div class="result-box" id="resultOutput" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Раздел 4: Техническое задание -->
+    <div id="tab-tz" class="tab-content">
+        <div class="card">
+            <h2>Техническое задание на доработку системы</h2>
+            <p>Ниже приведены основные требования к полноценной версии локального приложения для анализа рентгеновских снимков на базе MedGemma.</p>
+
+            <h3>1. Функциональные требования</h3>
+            <ul style="padding-left:1.5rem;">
+                <li>Загрузка снимков в форматах JPG, PNG, DICOM.</li>
+                <li>Предварительный просмотр загруженного изображения.</li>
+                <li>Выбор типа анализа (кариес, периодонтит, кисты, костная ткань, общий).</li>
+                <li>Отправка запроса к модели MedGemma через API Ollama.</li>
+                <li>Вывод структурированного заключения: обнаруженные патологии, номера зубов, рекомендации.</li>
+                <li>Возможность копирования результата и сохранения истории анализов.</li>
+                <li>Полностью офлайн‑режим (не требующий доступа в интернет после установки).</li>
+            </ul>
+
+            <h3>2. Технические требования</h3>
+            <ul style="padding-left:1.5rem;">
+                <li>Backend: Python, Flask или FastAPI.</li>
+                <li>Модель ИИ: MedGemma 27B (или более лёгкая 7B для слабых ПК).</li>
+                <li>Хранение истории: SQLite или просто JSON‑файлы.</li>
+                <li>Интерфейс: HTML/CSS/JavaScript (можно Vue.js или React для SPA).</li>
+                <li>Обработка DICOM: библиотека pydicom.</li>
+                <li>Запуск одним исполняемым файлом (например, через PyInstaller) для удобства врача.</li>
+            </ul>
+
+            <h3>3. Юридические и регуляторные требования</h3>
+            <ul style="padding-left:1.5rem;">
+                <li>Перед клиническим использованием необходимо получить регистрационное удостоверение Росздравнадзора (согласно ФЗ‑323).</li>
+                <li>Программа должна соответствовать ГОСТ Р МЭК 62304-2022 (ПО для медицинских изделий).</li>
+                <li>Обеспечить конфиденциальность и защиту персональных данных пациентов (152‑ФЗ).</li>
+            </ul>
+
+            <h3>4. Дополнительные пожелания</h3>
+            <ul style="padding-left:1.5rem;">
+                <li>Простой и понятный интерфейс для врачей, не знакомых с технологиями.</li>
+                <li>Возможность расширения другими open‑source моделями (например, для КТ).</li>
+                <li>Система обновления модели без переустановки всего приложения.</li>
+                <li>Создание установщика «один клик» для Windows.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        Создано по заказу Шелистова Ильи Николаевича 😊
+    </div>
+</div>
+
+<script>
+    'use strict';
+
+    // Переключение вкладок
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Убираем активный класс со всех кнопок и вкладок
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            // Активируем нужную
+            btn.classList.add('active');
+            const tabId = btn.dataset.tab;
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    // Логика прототипа
+    let selectedFile = null;
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            alert('Пожалуйста, выберите изображение.');
+            return;
+        }
+        selectedFile = file;
+        document.getElementById('uploadLabel').textContent = '📎 ' + file.name;
+        document.getElementById('analyzeBtn').disabled = false;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function analyzeImage() {
+        if (!selectedFile) return;
+        const analysisType = document.getElementById('analysisType').value;
+        const resultDiv = document.getElementById('resultOutput');
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = '🔄 Идёт анализ... (имитация)';
+
+        // Имитация задержки и выдача фиктивного результата
+        setTimeout(() => {
+            let fakeResult = '';
+            switch (analysisType) {
+                case 'full':
+                    fakeResult = 'Заключение:\n- Зуб 1.6: кариес дентина (средний)\n- Зуб 2.5: подозрение на периодонтит\n- Зуб 4.7: ретенирован, наклон в сторону 4.6\nРекомендовано: лечение 1.6, дополнительное обследование 2.5, консультация ортодонта.';
+                    break;
+                case 'caries':
+                    fakeResult = 'Признаки кариеса:\n- Зуб 1.6: фиссурный кариес (глубокий)\n- Зуб 3.5: апроксимальный кариес (средний)\nОстальные зубы интактны.';
+                    break;
+                case 'periodontitis':
+                    fakeResult = 'Обнаружены очаги разрежения костной ткани у верхушек корней зубов 2.2 и 3.7. Расширение периодонтальной щели до 2 мм. Рекомендовано: эндодонтическое лечение.';
+                    break;
+                case 'cysts':
+                    fakeResult = 'Кистозное образование в области верхушки корня зуба 4.5 размером 5х6 мм. Второе образование в области нижнего третьего моляра слева.';
+                    break;
+                case 'bone':
+                    fakeResult = 'Высота межальвеолярных перегородок: сохранена. Плотность костной ткани: нормальная. Признаков остеопороза не выявлено.';
+                    break;
+                default:
+                    fakeResult = 'Патологий не обнаружено.';
+            }
+            fakeResult += '\n\n⚠️ Это демонстрационный результат. Для реального анализа подключите MedGemma.';
+            resultDiv.textContent = fakeResult;
+        }, 2000);
+    }
+
+    // Кнопка "Запустить анализ" также может быть активирована после выбора файла
+    document.getElementById('analyzeBtn').addEventListener('click', analyzeImage);
+</script>
+</body>
+</html>
